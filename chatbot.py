@@ -6,11 +6,12 @@ import pandas as pd
 url = "https://raw.githubusercontent.com/vikasjha001/telegram/main/qna_chitchat_professional.tsv"
 df = pd.read_csv(url, sep="\t")
 
-
+# Base url for getting user message...
 base_url = "https://api.telegram.org/bot5344978234:AAE98EBYB4oUJ9BIKReaJzIkapt99stOLfc"
 
-def read_msg(offset):
 
+# Read Message which is sent by user
+def read_msg(offset):
   parameters = {
       "offset" : offset,
   }
@@ -24,6 +25,8 @@ def read_msg(offset):
   if data['result']:
     return data['result'][-1]['update_id'] + 1
 
+
+# Auto Reply through the file which is written by the author.
 def auto_answer(message):
   answer = df.loc[df['Question'].str.lower() == message.lower()]
   
@@ -33,6 +36,8 @@ def auto_answer(message):
   else:
     return "Sorry, I could not understand You !!! : I am still learning and try to better in answering."
 
+
+# Sending message to the user 
 def send_msg(message):
   text = message['message']['text']
   message_id = message['message']['message_id']
