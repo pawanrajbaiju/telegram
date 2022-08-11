@@ -3,11 +3,12 @@ import requests
 import pandas as pd
 
 # Questions Files Link
-url = "https://raw.githubusercontent.com/vikasjha001/telegram/main/qna_chitchat_professional.tsv"
+url = "https://raw.githubusercontent.com/pawanrajbaiju/telegram/main/qna_chitchat_professional.tsv"
+input = "/content/drive/MyDrive/Colab Notebooks/Question.csv"
 df = pd.read_csv(url, sep="\t")
 
 # Base url for getting user message...
-base_url = "https://api.telegram.org/bot5344978234:AAE98EBYB4oUJ9BIKReaJzIkapt99stOLfc"
+base_url = "https://api.telegram.org/bot5574969249:AAHbBAF82Fz6YzJ0LU4s6oeXpKPXdFqz2SA"
 
 
 # Read Message which is sent by user
@@ -18,9 +19,10 @@ def read_msg(offset):
   resp = requests.get(base_url + "/getUpdates", data=parameters)
   data = resp.json()
   print(data)
-
+  
   for result in data['result']:
-    send_msg(result)
+    if 'text' in result['message']:
+      send_msg(result)
 
   if data['result']:
     return data['result'][-1]['update_id'] + 1
@@ -34,17 +36,22 @@ def auto_answer(message):
     answer = answer.iloc[0]['Answer']
     return answer
   else:
+    print(message)
+    with open(input, 'a') as f:
+      f.write(str(message + "\n"))
+      f.close()
     return "Sorry, I could not understand You !!! : I am still learning and try to better in answering."
-
+    
 
 # Sending message to the user 
 def send_msg(message):
   text = message['message']['text']
   message_id = message['message']['message_id']
   answer = auto_answer(text)
-
+  chat_id = message['message']['chat']['id']
+ 
   parameters = {
-      "chat_id" : "915712341",
+      "chat_id" : chat_id,
       "text" : answer,
       "reply_to_message_id" : message_id
   }
